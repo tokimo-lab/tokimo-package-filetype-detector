@@ -89,7 +89,10 @@ impl std::fmt::Display for FileCategory {
 /// Detect file type from an async reader (reads up to 8 KB).
 ///
 /// `filename` is optional but improves accuracy via extension fallback.
-pub async fn detect_file(reader: &mut (impl tokio::io::AsyncRead + Unpin), filename: Option<&str>) -> FileTypeInfo {
+pub async fn detect_file(
+    reader: &mut (impl tokio::io::AsyncRead + Unpin),
+    filename: Option<&str>,
+) -> FileTypeInfo {
     let mut buf = vec![0u8; SAMPLE_SIZE];
     let Ok(n) = reader.read(&mut buf).await else {
         return unknown_info();
@@ -209,7 +212,9 @@ fn is_likely_binary(buf: &[u8]) -> bool {
     };
     let control_count = sample
         .iter()
-        .filter(|&&b| b == 0 || (b < 0x08) || (b == 0x0e) || (b == 0x0f) || (0x1c..0x20).contains(&b))
+        .filter(|&&b| {
+            b == 0 || (b < 0x08) || (b == 0x0e) || (b == 0x0f) || (0x1c..0x20).contains(&b)
+        })
         .count();
     let ratio = control_count as f64 / sample.len() as f64;
     ratio > 0.05
@@ -326,8 +331,12 @@ fn mime_to_category(type_str: &str, subtype: &str) -> FileCategory {
             "pdf" | "rtf" | "msword" | "x-ole-storage" => FileCategory::Document,
             "vnd.ms-excel" => FileCategory::Spreadsheet,
             "vnd.ms-powerpoint" => FileCategory::Presentation,
-            "zip" | "gzip" | "x-tar" | "x-7z-compressed" | "x-rar-compressed" => FileCategory::Archive,
-            s if s.contains("wordprocessing") || s.contains("opendocument.text") => FileCategory::Document,
+            "zip" | "gzip" | "x-tar" | "x-7z-compressed" | "x-rar-compressed" => {
+                FileCategory::Archive
+            }
+            s if s.contains("wordprocessing") || s.contains("opendocument.text") => {
+                FileCategory::Document
+            }
             s if s.contains("spreadsheet") => FileCategory::Spreadsheet,
             s if s.contains("presentation") => FileCategory::Presentation,
             "json" | "xml" | "javascript" | "typescript" => FileCategory::Text,
