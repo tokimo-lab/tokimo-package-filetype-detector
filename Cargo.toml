@@ -1,0 +1,22 @@
+[package]
+name = "tokimo-package-filetype-detector"
+version = "0.1.0"
+edition = "2024"
+description = "Universal file type detector for Tokimo – binary/text detection, encoding, MIME, and programming language identification"
+
+[lib]
+name = "tokimo_filetype_detector"
+path = "src/lib.rs"
+
+[dependencies]
+chardetng = "1.0"
+hyperpolyglot = "0.1"
+mime_guess = "2"
+thiserror = { workspace = true }
+tokio = { workspace = true, features = ["io-util", "fs"] }
+
+[dev-dependencies]
+tokio = { workspace = true, features = ["rt", "macros"] }
+
+[lints]
+workspace = true
