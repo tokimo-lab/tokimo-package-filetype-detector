@@ -43,11 +43,7 @@ pub(crate) static MAGIC_TABLE: &[(&[u8], &str, &str)] = &[
     (b"\x1f\x8b", "application/gzip", "archive"),
     (b"BZh", "application/x-bzip2", "archive"),
     (b"\xfd7zXZ\x00", "application/x-xz", "archive"),
-    (
-        b"7z\xbc\xaf\x27\x1c",
-        "application/x-7z-compressed",
-        "archive",
-    ),
+    (b"7z\xbc\xaf\x27\x1c", "application/x-7z-compressed", "archive"),
     (b"Rar!\x1a\x07", "application/x-rar-compressed", "archive"),
     // ── Fonts ───────────────────────────────────────────────────────────
     (b"\x00\x01\x00\x00", "font/sfnt", "font"), // TrueType
@@ -103,16 +99,10 @@ pub(crate) fn classify_zip(buf: &[u8]) -> (&'static str, &'static str) {
     if s.contains("content.xml") {
         // ODF formats
         if s.contains("office:spreadsheet") {
-            return (
-                "application/vnd.oasis.opendocument.spreadsheet",
-                "spreadsheet",
-            );
+            return ("application/vnd.oasis.opendocument.spreadsheet", "spreadsheet");
         }
         if s.contains("office:presentation") {
-            return (
-                "application/vnd.oasis.opendocument.presentation",
-                "presentation",
-            );
+            return ("application/vnd.oasis.opendocument.presentation", "presentation");
         }
         return ("application/vnd.oasis.opendocument.text", "document");
     }
@@ -138,9 +128,7 @@ pub(crate) fn classify_ole(buf: &[u8]) -> (&'static str, &'static str) {
         return ("application/vnd.ms-excel", "spreadsheet");
     }
     // PowerPoint files contain specific stream names
-    if contains_utf16le(haystack, b"PowerPoint Document")
-        || contains_utf16le(haystack, b"Current User")
-    {
+    if contains_utf16le(haystack, b"PowerPoint Document") || contains_utf16le(haystack, b"Current User") {
         return ("application/vnd.ms-powerpoint", "presentation");
     }
 
