@@ -169,6 +169,8 @@ pub(crate) fn classify_ftyp(buf: &[u8]) -> Option<(&'static str, &'static str)> 
     match brand {
         b"M4A " | b"M4B " => Some(("audio/mp4", "audio")),
         b"qt  " => Some(("video/quicktime", "video")),
+        // Ambiguous brands (isom, mp42, etc.) – cannot determine audio vs video
+        // from ftyp alone; callers should prefer extension-based detection.
         _ => Some(("video/mp4", "video")),
     }
 }
